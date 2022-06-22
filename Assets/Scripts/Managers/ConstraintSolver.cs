@@ -41,8 +41,9 @@ public class ConstraintSolver : MonoBehaviour
     private TilePattern _mat_Green;      //05
     private TilePattern _mat_Stair;      //05
 
-    private IEnumerator _propogateStep;  //changed from private to public
+    //private IEnumerator _propagateStep;  //changed from private to public
     private bool _isCollapsing = false;
+    private bool _allTilesSet = false;
 
 
     #endregion
@@ -120,7 +121,7 @@ public class ConstraintSolver : MonoBehaviour
         GetNextTile();
 
         //look into making this into a bounding box
-       _propogateStep = PropogateStep();
+        //_propagateStep = PropagateStep();
     }
 
 
@@ -141,29 +142,29 @@ public class ConstraintSolver : MonoBehaviour
     //Buttons, Unity Buttons on Canvas are not compadible with script
     private void OnGUI()
     {
-        if (GUI.Button(new Rect(10, 10, 200, 50), "Collapse Me"))
-        {
-            if (!_isCollapsing)
-                StartCoroutine(_propogateStep);
-            else
-            {
-                StopCoroutine(_propogateStep);
-                _isCollapsing = false;
-            }
+        //if (GUI.Button(new Rect(10, 10, 200, 50), "Collapse Me"))
+        //{
+        //    if (!_isCollapsing)
+        //        StartCoroutine(PropagateStep());
+        //    else
+        //    {
+        //        StopCoroutine(PropagateStep());
+        //        _isCollapsing = false;
+        //    }
+        //    StartStopCollapsing();
 
-
-        }
+        //}
         //if (GUI.Button(new Rect(10, 100, 200, 50), "Hide Me"))       //Only needed for troubleshooting connections
         //{
         //  VoidVisability();
         //}
 
-        //if (GUI.Button(new Rect(10, 190, 200, 50), "Plan Me"))   //Trying to phase out this button method
-        //{
-        //    GetPlan();
+        if (GUI.Button(new Rect(10, 190, 200, 50), "Plan Me"))   //Trying to phase out this button method
+        {
+            GetPlan();
 
-       // }
-   
+        }
+
     }
     #endregion
 
@@ -172,10 +173,10 @@ public class ConstraintSolver : MonoBehaviour
     public void StartStopCollapsing()
     {
         if (!_isCollapsing)
-            StartCoroutine(_propogateStep);
+            StartCoroutine(PropagateStep());
         else
         {
-            StopCoroutine(_propogateStep);
+            StopCoroutine(PropagateStep());
             _isCollapsing = false;
         }
     }
@@ -201,9 +202,9 @@ public class ConstraintSolver : MonoBehaviour
     }
 
 
-    private IEnumerator PropogateStep() //changed from private to public
+    private IEnumerator PropagateStep() //changed from private to public
     {
-        while (true)
+        while (!_allTilesSet)
         {
             _isCollapsing = true;
             GetNextTile();
@@ -228,6 +229,7 @@ public class ConstraintSolver : MonoBehaviour
 
         if (UnsetTiles.Count == 0)
         {
+            _allTilesSet = true;
             Debug.Log("all tiles are set");
             return;
         }

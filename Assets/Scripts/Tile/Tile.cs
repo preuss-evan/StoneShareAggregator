@@ -45,6 +45,7 @@ public class Tile
             if (_currentGo == null)
                 return null;
             else
+                // get the collider of the children with the tag 'PlanCollider'
                 return _currentGo.GetComponentInChildren<MeshCollider>();
         }
     }
